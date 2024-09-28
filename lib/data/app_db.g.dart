@@ -226,9 +226,9 @@ class $CaracteristicaTableTable extends CaracteristicaTable
   $CaracteristicaTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'ID', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _nomeMeta = const VerificationMeta('nome');
   @override
   late final GeneratedColumn<String> nome = GeneratedColumn<String>(
@@ -261,6 +261,8 @@ class $CaracteristicaTableTable extends CaracteristicaTable
     final data = instance.toColumns(true);
     if (data.containsKey('ID')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['ID']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('NOME')) {
       context.handle(
@@ -287,7 +289,7 @@ class $CaracteristicaTableTable extends CaracteristicaTable
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return CaracteristicaTableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}ID'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}ID'])!,
       nome: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}NOME']),
       descricao: attachedDatabase.typeMapping
@@ -305,7 +307,7 @@ class $CaracteristicaTableTable extends CaracteristicaTable
 
 class CaracteristicaTableData extends DataClass
     implements Insertable<CaracteristicaTableData> {
-  final int id;
+  final String id;
   final String? nome;
   final String? descricao;
   final int? idTipoDiario;
@@ -314,7 +316,7 @@ class CaracteristicaTableData extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['ID'] = Variable<int>(id);
+    map['ID'] = Variable<String>(id);
     if (!nullToAbsent || nome != null) {
       map['NOME'] = Variable<String>(nome);
     }
@@ -344,7 +346,7 @@ class CaracteristicaTableData extends DataClass
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return CaracteristicaTableData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       nome: serializer.fromJson<String?>(json['nome']),
       descricao: serializer.fromJson<String?>(json['descricao']),
       idTipoDiario: serializer.fromJson<int?>(json['idTipoDiario']),
@@ -354,7 +356,7 @@ class CaracteristicaTableData extends DataClass
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'nome': serializer.toJson<String?>(nome),
       'descricao': serializer.toJson<String?>(descricao),
       'idTipoDiario': serializer.toJson<int?>(idTipoDiario),
@@ -362,7 +364,7 @@ class CaracteristicaTableData extends DataClass
   }
 
   CaracteristicaTableData copyWith(
-          {int? id,
+          {String? id,
           Value<String?> nome = const Value.absent(),
           Value<String?> descricao = const Value.absent(),
           Value<int?> idTipoDiario = const Value.absent()}) =>
@@ -409,46 +411,53 @@ class CaracteristicaTableData extends DataClass
 
 class CaracteristicaTableCompanion
     extends UpdateCompanion<CaracteristicaTableData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String?> nome;
   final Value<String?> descricao;
   final Value<int?> idTipoDiario;
+  final Value<int> rowid;
   const CaracteristicaTableCompanion({
     this.id = const Value.absent(),
     this.nome = const Value.absent(),
     this.descricao = const Value.absent(),
     this.idTipoDiario = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   CaracteristicaTableCompanion.insert({
-    this.id = const Value.absent(),
+    required String id,
     this.nome = const Value.absent(),
     this.descricao = const Value.absent(),
     this.idTipoDiario = const Value.absent(),
-  });
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
   static Insertable<CaracteristicaTableData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? nome,
     Expression<String>? descricao,
     Expression<int>? idTipoDiario,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'ID': id,
       if (nome != null) 'NOME': nome,
       if (descricao != null) 'DESCRICAO': descricao,
       if (idTipoDiario != null) 'ID_TIPO_DIARIO': idTipoDiario,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   CaracteristicaTableCompanion copyWith(
-      {Value<int>? id,
+      {Value<String>? id,
       Value<String?>? nome,
       Value<String?>? descricao,
-      Value<int?>? idTipoDiario}) {
+      Value<int?>? idTipoDiario,
+      Value<int>? rowid}) {
     return CaracteristicaTableCompanion(
       id: id ?? this.id,
       nome: nome ?? this.nome,
       descricao: descricao ?? this.descricao,
       idTipoDiario: idTipoDiario ?? this.idTipoDiario,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -456,7 +465,7 @@ class CaracteristicaTableCompanion
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['ID'] = Variable<int>(id.value);
+      map['ID'] = Variable<String>(id.value);
     }
     if (nome.present) {
       map['NOME'] = Variable<String>(nome.value);
@@ -467,6 +476,9 @@ class CaracteristicaTableCompanion
     if (idTipoDiario.present) {
       map['ID_TIPO_DIARIO'] = Variable<int>(idTipoDiario.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -476,7 +488,8 @@ class CaracteristicaTableCompanion
           ..write('id: $id, ')
           ..write('nome: $nome, ')
           ..write('descricao: $descricao, ')
-          ..write('idTipoDiario: $idTipoDiario')
+          ..write('idTipoDiario: $idTipoDiario, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -490,9 +503,9 @@ class $FotoTableTable extends FotoTable
   $FotoTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'ID', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _caminhoMeta =
       const VerificationMeta('caminho');
   @override
@@ -525,6 +538,8 @@ class $FotoTableTable extends FotoTable
     final data = instance.toColumns(true);
     if (data.containsKey('ID')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['ID']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('CAMINHO')) {
       context.handle(_caminhoMeta,
@@ -550,7 +565,7 @@ class $FotoTableTable extends FotoTable
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return FotoTableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}ID'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}ID'])!,
       caminho: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}CAMINHO']),
       descricao: attachedDatabase.typeMapping
@@ -567,7 +582,7 @@ class $FotoTableTable extends FotoTable
 }
 
 class FotoTableData extends DataClass implements Insertable<FotoTableData> {
-  final int id;
+  final String id;
   final String? caminho;
   final String? descricao;
   final int? idTipoDiario;
@@ -576,7 +591,7 @@ class FotoTableData extends DataClass implements Insertable<FotoTableData> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['ID'] = Variable<int>(id);
+    map['ID'] = Variable<String>(id);
     if (!nullToAbsent || caminho != null) {
       map['CAMINHO'] = Variable<String>(caminho);
     }
@@ -608,7 +623,7 @@ class FotoTableData extends DataClass implements Insertable<FotoTableData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return FotoTableData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       caminho: serializer.fromJson<String?>(json['caminho']),
       descricao: serializer.fromJson<String?>(json['descricao']),
       idTipoDiario: serializer.fromJson<int?>(json['idTipoDiario']),
@@ -618,7 +633,7 @@ class FotoTableData extends DataClass implements Insertable<FotoTableData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'caminho': serializer.toJson<String?>(caminho),
       'descricao': serializer.toJson<String?>(descricao),
       'idTipoDiario': serializer.toJson<int?>(idTipoDiario),
@@ -626,7 +641,7 @@ class FotoTableData extends DataClass implements Insertable<FotoTableData> {
   }
 
   FotoTableData copyWith(
-          {int? id,
+          {String? id,
           Value<String?> caminho = const Value.absent(),
           Value<String?> descricao = const Value.absent(),
           Value<int?> idTipoDiario = const Value.absent()}) =>
@@ -672,46 +687,53 @@ class FotoTableData extends DataClass implements Insertable<FotoTableData> {
 }
 
 class FotoTableCompanion extends UpdateCompanion<FotoTableData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String?> caminho;
   final Value<String?> descricao;
   final Value<int?> idTipoDiario;
+  final Value<int> rowid;
   const FotoTableCompanion({
     this.id = const Value.absent(),
     this.caminho = const Value.absent(),
     this.descricao = const Value.absent(),
     this.idTipoDiario = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   FotoTableCompanion.insert({
-    this.id = const Value.absent(),
+    required String id,
     this.caminho = const Value.absent(),
     this.descricao = const Value.absent(),
     this.idTipoDiario = const Value.absent(),
-  });
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
   static Insertable<FotoTableData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? caminho,
     Expression<String>? descricao,
     Expression<int>? idTipoDiario,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'ID': id,
       if (caminho != null) 'CAMINHO': caminho,
       if (descricao != null) 'DESCRICAO': descricao,
       if (idTipoDiario != null) 'ID_TIPO_DIARIO': idTipoDiario,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   FotoTableCompanion copyWith(
-      {Value<int>? id,
+      {Value<String>? id,
       Value<String?>? caminho,
       Value<String?>? descricao,
-      Value<int?>? idTipoDiario}) {
+      Value<int?>? idTipoDiario,
+      Value<int>? rowid}) {
     return FotoTableCompanion(
       id: id ?? this.id,
       caminho: caminho ?? this.caminho,
       descricao: descricao ?? this.descricao,
       idTipoDiario: idTipoDiario ?? this.idTipoDiario,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -719,7 +741,7 @@ class FotoTableCompanion extends UpdateCompanion<FotoTableData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['ID'] = Variable<int>(id.value);
+      map['ID'] = Variable<String>(id.value);
     }
     if (caminho.present) {
       map['CAMINHO'] = Variable<String>(caminho.value);
@@ -730,6 +752,9 @@ class FotoTableCompanion extends UpdateCompanion<FotoTableData> {
     if (idTipoDiario.present) {
       map['ID_TIPO_DIARIO'] = Variable<int>(idTipoDiario.value);
     }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
     return map;
   }
 
@@ -739,7 +764,8 @@ class FotoTableCompanion extends UpdateCompanion<FotoTableData> {
           ..write('id: $id, ')
           ..write('caminho: $caminho, ')
           ..write('descricao: $descricao, ')
-          ..write('idTipoDiario: $idTipoDiario')
+          ..write('idTipoDiario: $idTipoDiario, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1372,23 +1398,25 @@ typedef $$DiarioTableTableProcessedTableManager = ProcessedTableManager<
     PrefetchHooks Function()>;
 typedef $$CaracteristicaTableTableCreateCompanionBuilder
     = CaracteristicaTableCompanion Function({
-  Value<int> id,
+  required String id,
   Value<String?> nome,
   Value<String?> descricao,
   Value<int?> idTipoDiario,
+  Value<int> rowid,
 });
 typedef $$CaracteristicaTableTableUpdateCompanionBuilder
     = CaracteristicaTableCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String?> nome,
   Value<String?> descricao,
   Value<int?> idTipoDiario,
+  Value<int> rowid,
 });
 
 class $$CaracteristicaTableTableFilterComposer
     extends FilterComposer<_$AppDb, $CaracteristicaTableTable> {
   $$CaracteristicaTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
+  ColumnFilters<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -1412,7 +1440,7 @@ class $$CaracteristicaTableTableFilterComposer
 class $$CaracteristicaTableTableOrderingComposer
     extends OrderingComposer<_$AppDb, $CaracteristicaTableTable> {
   $$CaracteristicaTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
+  ColumnOrderings<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
@@ -1458,28 +1486,32 @@ class $$CaracteristicaTableTableTableManager extends RootTableManager<
           orderingComposer: $$CaracteristicaTableTableOrderingComposer(
               ComposerState(db, table)),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<String?> nome = const Value.absent(),
             Value<String?> descricao = const Value.absent(),
             Value<int?> idTipoDiario = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               CaracteristicaTableCompanion(
             id: id,
             nome: nome,
             descricao: descricao,
             idTipoDiario: idTipoDiario,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            required String id,
             Value<String?> nome = const Value.absent(),
             Value<String?> descricao = const Value.absent(),
             Value<int?> idTipoDiario = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               CaracteristicaTableCompanion.insert(
             id: id,
             nome: nome,
             descricao: descricao,
             idTipoDiario: idTipoDiario,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -1504,22 +1536,24 @@ typedef $$CaracteristicaTableTableProcessedTableManager = ProcessedTableManager<
     CaracteristicaTableData,
     PrefetchHooks Function()>;
 typedef $$FotoTableTableCreateCompanionBuilder = FotoTableCompanion Function({
-  Value<int> id,
+  required String id,
   Value<String?> caminho,
   Value<String?> descricao,
   Value<int?> idTipoDiario,
+  Value<int> rowid,
 });
 typedef $$FotoTableTableUpdateCompanionBuilder = FotoTableCompanion Function({
-  Value<int> id,
+  Value<String> id,
   Value<String?> caminho,
   Value<String?> descricao,
   Value<int?> idTipoDiario,
+  Value<int> rowid,
 });
 
 class $$FotoTableTableFilterComposer
     extends FilterComposer<_$AppDb, $FotoTableTable> {
   $$FotoTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
+  ColumnFilters<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -1543,7 +1577,7 @@ class $$FotoTableTableFilterComposer
 class $$FotoTableTableOrderingComposer
     extends OrderingComposer<_$AppDb, $FotoTableTable> {
   $$FotoTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
+  ColumnOrderings<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
@@ -1584,28 +1618,32 @@ class $$FotoTableTableTableManager extends RootTableManager<
           orderingComposer:
               $$FotoTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<String?> caminho = const Value.absent(),
             Value<String?> descricao = const Value.absent(),
             Value<int?> idTipoDiario = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               FotoTableCompanion(
             id: id,
             caminho: caminho,
             descricao: descricao,
             idTipoDiario: idTipoDiario,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            required String id,
             Value<String?> caminho = const Value.absent(),
             Value<String?> descricao = const Value.absent(),
             Value<int?> idTipoDiario = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               FotoTableCompanion.insert(
             id: id,
             caminho: caminho,
             descricao: descricao,
             idTipoDiario: idTipoDiario,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

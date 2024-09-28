@@ -1,5 +1,7 @@
+import 'package:projeto_diarios_saude/data/app_db.dart';
+
 class FotoModel {
-  int? id;
+  String? id;
   String? caminho;
   String? descricao;
   int? idTipoDiario;
@@ -20,5 +22,21 @@ class FotoModel {
     data['descricao'] = descricao;
     data['idTipoDiario'] = idTipoDiario;
     return data;
+  }
+
+  FotoModel.fromData(FotoTableData data) {
+    id = data.id;
+    caminho = data.caminho;
+    descricao = data.descricao;
+    idTipoDiario = data.idTipoDiario;
+  }
+
+  FotoTableData toData() {
+    return FotoTableData(
+      id: id!,
+      caminho: caminho,
+      descricao: descricao,
+      idTipoDiario: idTipoDiario,
+    );
   }
 }

@@ -1,5 +1,7 @@
+import 'package:projeto_diarios_saude/data/app_db.dart';
+
 class CaracteristicaModel {
-  int? id;
+  String? id;
   String? nome;
   String? descricao;
   int? idTipoDiario;
@@ -20,5 +22,12 @@ class CaracteristicaModel {
     data['descricao'] = descricao;
     data['idTipoDiario'] = idTipoDiario;
     return data;
+  }
+
+  CaracteristicaModel.fromData(CaracteristicaTableData data) {
+    id = data.id;
+    nome = data.nome;
+    descricao = data.descricao;
+    idTipoDiario = data.idTipoDiario;
   }
 }
