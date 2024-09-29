@@ -11,9 +11,9 @@ class $DiarioTableTable extends DiarioTable
   $DiarioTableTable(this.attachedDatabase, [this._alias]);
   static const VerificationMeta _idMeta = const VerificationMeta('id');
   @override
-  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
       'ID', aliasedName, false,
-      type: DriftSqlType.int, requiredDuringInsert: false);
+      type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _nomeMeta = const VerificationMeta('nome');
   @override
   late final GeneratedColumn<String> nome = GeneratedColumn<String>(
@@ -39,6 +39,8 @@ class $DiarioTableTable extends DiarioTable
     final data = instance.toColumns(true);
     if (data.containsKey('ID')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['ID']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('NOME')) {
       context.handle(
@@ -58,7 +60,7 @@ class $DiarioTableTable extends DiarioTable
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
     return DiarioTableData(
       id: attachedDatabase.typeMapping
-          .read(DriftSqlType.int, data['${effectivePrefix}ID'])!,
+          .read(DriftSqlType.string, data['${effectivePrefix}ID'])!,
       nome: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}NOME']),
       descricao: attachedDatabase.typeMapping
@@ -73,14 +75,14 @@ class $DiarioTableTable extends DiarioTable
 }
 
 class DiarioTableData extends DataClass implements Insertable<DiarioTableData> {
-  final int id;
+  final String id;
   final String? nome;
   final String? descricao;
   const DiarioTableData({required this.id, this.nome, this.descricao});
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    map['ID'] = Variable<int>(id);
+    map['ID'] = Variable<String>(id);
     if (!nullToAbsent || nome != null) {
       map['NOME'] = Variable<String>(nome);
     }
@@ -104,7 +106,7 @@ class DiarioTableData extends DataClass implements Insertable<DiarioTableData> {
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return DiarioTableData(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       nome: serializer.fromJson<String?>(json['nome']),
       descricao: serializer.fromJson<String?>(json['descricao']),
     );
@@ -113,14 +115,14 @@ class DiarioTableData extends DataClass implements Insertable<DiarioTableData> {
   Map<String, dynamic> toJson({ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'nome': serializer.toJson<String?>(nome),
       'descricao': serializer.toJson<String?>(descricao),
     };
   }
 
   DiarioTableData copyWith(
-          {int? id,
+          {String? id,
           Value<String?> nome = const Value.absent(),
           Value<String?> descricao = const Value.absent()}) =>
       DiarioTableData(
@@ -158,37 +160,46 @@ class DiarioTableData extends DataClass implements Insertable<DiarioTableData> {
 }
 
 class DiarioTableCompanion extends UpdateCompanion<DiarioTableData> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String?> nome;
   final Value<String?> descricao;
+  final Value<int> rowid;
   const DiarioTableCompanion({
     this.id = const Value.absent(),
     this.nome = const Value.absent(),
     this.descricao = const Value.absent(),
+    this.rowid = const Value.absent(),
   });
   DiarioTableCompanion.insert({
-    this.id = const Value.absent(),
+    required String id,
     this.nome = const Value.absent(),
     this.descricao = const Value.absent(),
-  });
+    this.rowid = const Value.absent(),
+  }) : id = Value(id);
   static Insertable<DiarioTableData> custom({
-    Expression<int>? id,
+    Expression<String>? id,
     Expression<String>? nome,
     Expression<String>? descricao,
+    Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (id != null) 'ID': id,
       if (nome != null) 'NOME': nome,
       if (descricao != null) 'DESCRICAO': descricao,
+      if (rowid != null) 'rowid': rowid,
     });
   }
 
   DiarioTableCompanion copyWith(
-      {Value<int>? id, Value<String?>? nome, Value<String?>? descricao}) {
+      {Value<String>? id,
+      Value<String?>? nome,
+      Value<String?>? descricao,
+      Value<int>? rowid}) {
     return DiarioTableCompanion(
       id: id ?? this.id,
       nome: nome ?? this.nome,
       descricao: descricao ?? this.descricao,
+      rowid: rowid ?? this.rowid,
     );
   }
 
@@ -196,13 +207,16 @@ class DiarioTableCompanion extends UpdateCompanion<DiarioTableData> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['ID'] = Variable<int>(id.value);
+      map['ID'] = Variable<String>(id.value);
     }
     if (nome.present) {
       map['NOME'] = Variable<String>(nome.value);
     }
     if (descricao.present) {
       map['DESCRICAO'] = Variable<String>(descricao.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
     }
     return map;
   }
@@ -212,7 +226,8 @@ class DiarioTableCompanion extends UpdateCompanion<DiarioTableData> {
     return (StringBuffer('DiarioTableCompanion(')
           ..write('id: $id, ')
           ..write('nome: $nome, ')
-          ..write('descricao: $descricao')
+          ..write('descricao: $descricao, ')
+          ..write('rowid: $rowid')
           ..write(')'))
         .toString();
   }
@@ -1284,21 +1299,23 @@ abstract class _$AppDb extends GeneratedDatabase {
 
 typedef $$DiarioTableTableCreateCompanionBuilder = DiarioTableCompanion
     Function({
-  Value<int> id,
+  required String id,
   Value<String?> nome,
   Value<String?> descricao,
+  Value<int> rowid,
 });
 typedef $$DiarioTableTableUpdateCompanionBuilder = DiarioTableCompanion
     Function({
-  Value<int> id,
+  Value<String> id,
   Value<String?> nome,
   Value<String?> descricao,
+  Value<int> rowid,
 });
 
 class $$DiarioTableTableFilterComposer
     extends FilterComposer<_$AppDb, $DiarioTableTable> {
   $$DiarioTableTableFilterComposer(super.$state);
-  ColumnFilters<int> get id => $state.composableBuilder(
+  ColumnFilters<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnFilters(column, joinBuilders: joinBuilders));
@@ -1317,7 +1334,7 @@ class $$DiarioTableTableFilterComposer
 class $$DiarioTableTableOrderingComposer
     extends OrderingComposer<_$AppDb, $DiarioTableTable> {
   $$DiarioTableTableOrderingComposer(super.$state);
-  ColumnOrderings<int> get id => $state.composableBuilder(
+  ColumnOrderings<String> get id => $state.composableBuilder(
       column: $state.table.id,
       builder: (column, joinBuilders) =>
           ColumnOrderings(column, joinBuilders: joinBuilders));
@@ -1356,24 +1373,28 @@ class $$DiarioTableTableTableManager extends RootTableManager<
           orderingComposer:
               $$DiarioTableTableOrderingComposer(ComposerState(db, table)),
           updateCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            Value<String> id = const Value.absent(),
             Value<String?> nome = const Value.absent(),
             Value<String?> descricao = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               DiarioTableCompanion(
             id: id,
             nome: nome,
             descricao: descricao,
+            rowid: rowid,
           ),
           createCompanionCallback: ({
-            Value<int> id = const Value.absent(),
+            required String id,
             Value<String?> nome = const Value.absent(),
             Value<String?> descricao = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
           }) =>
               DiarioTableCompanion.insert(
             id: id,
             nome: nome,
             descricao: descricao,
+            rowid: rowid,
           ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

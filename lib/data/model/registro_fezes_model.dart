@@ -1,3 +1,6 @@
+import 'package:projeto_diarios_saude/data/app_db.dart';
+import 'package:projeto_diarios_saude/data/table/registro_fezes_table.dart';
+
 class RegistroFezesModel {
   String? id;
   String? idUsuario;
@@ -45,5 +48,31 @@ class RegistroFezesModel {
     data['cor'] = cor;
     data['observacoes'] = observacoes;
     return data;
+  }
+
+  RegistroFezesModel.fromData(RegistroFezesTableData data) {
+    id = data.id;
+    idUsuario = data.idUsuario;
+    this.data = data.data;
+    duracao = data.duracao;
+    quantidade = data.quantidade;
+    nivelHumor = data.nivelHumor;
+    nivelBristrol = data.nivelBristrol;
+    cor = data.cor;
+    observacoes = data.observacoes;
+  }
+
+  RegistroFezesTableData toData() {
+    return RegistroFezesTableData(
+      id: id!,
+      idUsuario: idUsuario!,
+      data: data!,
+      duracao: duracao!,
+      quantidade: quantidade!,
+      nivelHumor: nivelHumor!,
+      nivelBristrol: nivelBristrol!,
+      cor: cor!,
+      observacoes: observacoes!,
+    );
   }
 }
