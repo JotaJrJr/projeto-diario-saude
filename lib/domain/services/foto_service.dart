@@ -7,6 +7,6 @@ abstract class FotoService {
   Future<FotoModel> save(FotoModel model);
   Future<FotoModel> insertOrUpdate(FotoModel model);
   Future<List<FotoModel>> queryByTipoDiario(int idTipoDiario);
-  Future<void> removeById(FotoModel model);
+  Future<void> remove(FotoModel model);
   Future<void> removeAll();
 }

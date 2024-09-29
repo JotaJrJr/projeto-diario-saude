@@ -10,11 +10,25 @@ class FotoDao extends DatabaseAccessor<AppDb> with _$FotoDaoMixin {
 
   FotoDao(this._db) : super(_db);
 
-  Future<List<FotoTableData>> getAll() => select(fotoTable).get();
+  Future<List<FotoTableData>> queryAll() => select(fotoTable).get();
 
-  Future insertOrUpdate(Insertable<FotoTableData> data) => into(fotoTable).insertOnConflictUpdate(data);
+  Future modify(Insertable<FotoTableData> data) => update(fotoTable).replace(data);
 
   Future save(Insertable<FotoTableData> data) => into(fotoTable).insert(data);
+
+  Future insertOrUpdate(FotoTableData data) async {
+    return await (select(fotoTable)
+          ..where((tbl) => tbl.id.equals(data.id))
+          ..limit(1))
+        .getSingleOrNull()
+        .then((value) {
+      if (value != null) {
+        modify(data);
+      } else {
+        return save(data);
+      }
+    });
+  }
 
   Future<FotoTableData> queryById(String id) {
     return (select(fotoTable)..where((tbl) => tbl.id.equals(id))).getSingle();

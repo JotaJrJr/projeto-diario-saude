@@ -9,7 +9,7 @@ class FotoServiceImpl implements FotoService {
 
   @override
   Future<List<FotoModel>> getAll() {
-    return _dao.getAll().then((value) => value.map((e) => FotoModel.fromData(e)).toList());
+    return _dao.queryAll().then((value) => value.map((e) => FotoModel.fromData(e)).toList());
   }
 
   @override
@@ -38,7 +38,7 @@ class FotoServiceImpl implements FotoService {
   }
 
   @override
-  Future<void> removeById(FotoModel model) {
+  Future<void> remove(FotoModel model) {
     return _dao.remove(model.toData());
   }
 

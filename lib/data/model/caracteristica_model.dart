@@ -30,4 +30,13 @@ class CaracteristicaModel {
     descricao = data.descricao;
     idTipoDiario = data.idTipoDiario;
   }
+
+  CaracteristicaTableData toData() {
+    return CaracteristicaTableData(
+      id: id!,
+      nome: nome,
+      descricao: descricao,
+      idTipoDiario: idTipoDiario,
+    );
+  }
 }

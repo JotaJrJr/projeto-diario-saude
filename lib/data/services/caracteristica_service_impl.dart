@@ -1,52 +1,49 @@
+import 'package:projeto_diarios_saude/data/dao/caracteristica_dao.dart';
 import 'package:projeto_diarios_saude/data/model/caracteristica_model.dart';
 import 'package:projeto_diarios_saude/domain/services/caracteristica_service.dart';
 
 class CaracteristicaServiceImpl implements CaracteristicaService {
+  final CaracteristicaDao _dao;
+
+  CaracteristicaServiceImpl(this._dao);
+
   @override
   Future<CaracteristicaModel> insertOrUpdate(CaracteristicaModel model) {
-    // TODO: implement insertOrUpdate
-    throw UnimplementedError();
+    return _dao.insertOrUpdate(model.toData()).then((value) => CaracteristicaModel.fromData(value));
   }
 
   @override
-  Future<List<CaracteristicaModel>> listarCaracteristicas() {
-    // TODO: implement listarCaracteristicas
-    throw UnimplementedError();
+  Future<List<CaracteristicaModel>> queryAll() {
+    return _dao.queryAll().then((value) => value.map((e) => CaracteristicaModel.fromData(e)).toList());
   }
 
   @override
   Future<CaracteristicaModel> queryById(String id) {
-    // TODO: implement queryById
-    throw UnimplementedError();
+    return _dao.queryById(id).then((value) => CaracteristicaModel.fromData(value));
   }
 
   @override
   Future<CaracteristicaModel> queryByNome(String nome) {
-    // TODO: implement queryByNome
-    throw UnimplementedError();
+    return _dao.queryByNome(nome).then((value) => CaracteristicaModel.fromData(value));
   }
 
   @override
-  Future<CaracteristicaModel> queryByTipoDiario(int idTipoDiario) {
-    // TODO: implement queryByTipoDiario
-    throw UnimplementedError();
+  Future<List<CaracteristicaModel>> queryByTipoDiario(int idTipoDiario) {
+    return _dao.queryByTipoDiario(idTipoDiario).then((value) => value.map((e) => CaracteristicaModel.fromData(e)).toList());
   }
 
   @override
   Future<void> removeAll() {
-    // TODO: implement removeAll
-    throw UnimplementedError();
+    return _dao.removeAll();
   }
 
   @override
-  Future<void> removeById(int id) {
-    // TODO: implement removeById
-    throw UnimplementedError();
+  Future<void> remove(CaracteristicaModel model) {
+    return _dao.remove(model.toData());
   }
 
   @override
   Future<CaracteristicaModel> save(CaracteristicaModel model) {
-    // TODO: implement save
-    throw UnimplementedError();
+    return _dao.save(model.toData()).then((value) => CaracteristicaModel.fromData(value));
   }
 }
