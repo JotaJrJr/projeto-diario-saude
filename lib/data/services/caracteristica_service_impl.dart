@@ -9,7 +9,7 @@ class CaracteristicaServiceImpl implements CaracteristicaService {
 
   @override
   Future<CaracteristicaModel> insertOrUpdate(CaracteristicaModel model) {
-    return _dao.insertOrUpdate(model.toData()).then((value) => CaracteristicaModel.fromData(value));
+    return _dao.insertOrUpdate(model.toData()).then((value) => model);
   }
 
   @override
@@ -28,7 +28,7 @@ class CaracteristicaServiceImpl implements CaracteristicaService {
   }
 
   @override
-  Future<List<CaracteristicaModel>> queryByTipoDiario(int idTipoDiario) {
+  Future<List<CaracteristicaModel>> queryByTipoDiario(String idTipoDiario) {
     return _dao.queryByTipoDiario(idTipoDiario).then((value) => value.map((e) => CaracteristicaModel.fromData(e)).toList());
   }
 
@@ -38,12 +38,12 @@ class CaracteristicaServiceImpl implements CaracteristicaService {
   }
 
   @override
-  Future<void> remove(CaracteristicaModel model) {
-    return _dao.remove(model.toData());
+  Future<void> removeById(String id) {
+    return _dao.removeById(id);
   }
 
   @override
   Future<CaracteristicaModel> save(CaracteristicaModel model) {
-    return _dao.save(model.toData()).then((value) => CaracteristicaModel.fromData(value));
+    return _dao.save(model.toData()).then((value) => model);
   }
 }

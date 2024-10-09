@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_diarios_saude/features/diario_crohn/formulario_crohn/view/formulario_crohn_page.dart';
+import 'package:projeto_diarios_saude/features/home/view/home_page.dart';
 import 'package:projeto_diarios_saude/features/splash/view/splash_page.dart';
 import 'package:provider/provider.dart';
 
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
           useMaterial3: true,
         ),
         // home: const SplashPage(),
-        home: FormularioCrohnPage(),
+        home: const HomePage(),
       ),
     );
   }

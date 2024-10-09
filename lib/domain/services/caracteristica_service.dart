@@ -4,9 +4,9 @@ abstract class CaracteristicaService {
   Future<List<CaracteristicaModel>> queryAll();
   Future<CaracteristicaModel> queryById(String id);
   Future<CaracteristicaModel> queryByNome(String nome);
-  Future<CaracteristicaModel> save(CaracteristicaModel model);
+  Future save(CaracteristicaModel model);
   Future<CaracteristicaModel> insertOrUpdate(CaracteristicaModel model);
-  Future<List<CaracteristicaModel>> queryByTipoDiario(int idTipoDiario);
-  Future<void> remove(CaracteristicaModel model);
+  Future<List<CaracteristicaModel>> queryByTipoDiario(String idTipoDiario);
+  Future<void> removeById(String id);
   Future<void> removeAll();
 }

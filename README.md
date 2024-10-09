@@ -14,3 +14,20 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+
+
+
+
+
+
+Rotina de Skin Care é um ritual contínuo para tratamento para cada tipo de pele em específico.
+
+Para peles oleósas, mista, seca e extra seca.
+
+Intuito
+
+Tratamentos distintos entre noturno e diuno, opção de cirar lembrete com horário
+
+Também há a opção, algo genêrico fora desse contexto, que não encaixa em ambos
+
+Fotos para mostrar o progresso

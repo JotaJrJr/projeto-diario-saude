@@ -23,7 +23,7 @@ class CaracteristicaDao extends DatabaseAccessor<AppDb> with _$CaracteristicaDao
         .getSingleOrNull()
         .then((value) {
       if (value != null) {
-        modify(data);
+        return modify(data);
       } else {
         return save(data);
       }
@@ -38,11 +38,13 @@ class CaracteristicaDao extends DatabaseAccessor<AppDb> with _$CaracteristicaDao
     return (select(caracteristicaTable)..where((tbl) => tbl.nome.equals(nome))).getSingle();
   }
 
-  Future<List<CaracteristicaTableData>> queryByTipoDiario(int idTipoDiario) {
+  Future<List<CaracteristicaTableData>> queryByTipoDiario(String idTipoDiario) {
     return (select(caracteristicaTable)..where((tbl) => tbl.idTipoDiario.equals(idTipoDiario))).get();
   }
 
-  Future remove(Insertable<CaracteristicaTableData> data) => delete(caracteristicaTable).delete(data);
+  Future<void> removeById(String id) async {
+    await (delete(caracteristicaTable)..where((tbl) => tbl.id.equals(id))).go();
+  }
 
   Future removeAll() => delete(caracteristicaTable).go();
 }

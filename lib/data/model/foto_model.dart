@@ -4,6 +4,7 @@ class FotoModel {
   String? id;
   String? caminho;
   String? descricao;
+  int? date;
   int? idTipoDiario;
 
   FotoModel({this.id, this.caminho, this.descricao, this.idTipoDiario});
@@ -12,6 +13,7 @@ class FotoModel {
     id = json['id'];
     caminho = json['caminho'];
     descricao = json['descricao'];
+    date = json['date'];
     idTipoDiario = json['idTipoDiario'];
   }
 
@@ -20,6 +22,7 @@ class FotoModel {
     data['id'] = id;
     data['caminho'] = caminho;
     data['descricao'] = descricao;
+    data['date'] = date;
     data['idTipoDiario'] = idTipoDiario;
     return data;
   }
@@ -28,6 +31,7 @@ class FotoModel {
     id = data.id;
     caminho = data.caminho;
     descricao = data.descricao;
+    date = data.date;
     idTipoDiario = data.idTipoDiario;
   }
 
@@ -36,6 +40,7 @@ class FotoModel {
       id: id!,
       caminho: caminho,
       descricao: descricao,
+      date: date,
       idTipoDiario: idTipoDiario,
     );
   }

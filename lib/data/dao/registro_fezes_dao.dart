@@ -18,7 +18,7 @@ class RegistroFezesDao extends DatabaseAccessor<AppDb> with _$RegistroFezesDaoMi
 
   Future insertOrUpdate(RegistroFezesTableData data) async {
     return await (select(registroFezesTable)
-          ..where((tbl) => tbl.id.equals(data.id))
+          ..where((tbl) => tbl.idDiario.equals(data.idDiario))
           ..limit(1))
         .getSingleOrNull()
         .then((value) {
@@ -31,11 +31,30 @@ class RegistroFezesDao extends DatabaseAccessor<AppDb> with _$RegistroFezesDaoMi
   }
 
   Future<List<RegistroFezesTableData>> queryByPeriodo(int inicio, int fim) async {
-    return (select(registroFezesTable)..where((tbl) => tbl.data.isBetweenValues(inicio, fim))).get();
+    var query = select(registroFezesTable).join(
+      [
+        innerJoin(registroFezesTable, _db.diarioTable.id.equalsExp(registroFezesTable.idDiario)),
+      ],
+    );
+
+    return query.map((row) {
+      final fezes = row.readTable(registroFezesTable);
+      final diario = row.readTable(_db.diarioTable);
+
+      return RegistroFezesTableData(
+        idDiario: diario.id,
+        duracao: fezes.duracao,
+        quantidade: fezes.quantidade,
+        nivelBristrol: fezes.nivelBristrol,
+        nivelHumor: fezes.nivelHumor,
+        cor: fezes.cor,
+        observacoes: fezes.observacoes,
+      );
+    }).get();
   }
 
   Future<RegistroFezesTableData> queryById(String id) {
-    return (select(registroFezesTable)..where((tbl) => tbl.id.equals(id))).getSingle();
+    return (select(registroFezesTable)..where((tbl) => tbl.idDiario.equals(id))).getSingle();
   }
 
   Future remove(Insertable<RegistroFezesTableData> data) => delete(registroFezesTable).delete(data);

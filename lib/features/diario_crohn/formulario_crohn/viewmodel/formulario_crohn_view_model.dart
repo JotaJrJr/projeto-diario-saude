@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:projeto_diarios_saude/data/model/caracteristica_model.dart';
-import 'package:projeto_diarios_saude/data/services/caracteristica_service_impl.dart';
+import 'package:projeto_diarios_saude/data/model/registro_fezes_model.dart';
+import 'package:projeto_diarios_saude/domain/enums/caracteristicas_fezes_enum.dart';
+import 'package:projeto_diarios_saude/domain/enums/crohn_humor_enum.dart';
 import 'package:projeto_diarios_saude/domain/services/caracteristica_service.dart';
 import 'package:projeto_diarios_saude/domain/services/registro_fezes_service.dart';
 import 'package:uuid/uuid.dart';
+
+import '../../models/caracteristica_model_page.dart';
 
 class FormularioCrohnViewModel extends ChangeNotifier {
   final RegistroFezesService fezesService;
@@ -11,12 +15,15 @@ class FormularioCrohnViewModel extends ChangeNotifier {
 
   int _sliderValue = 1;
   int? _tipoEnum;
-  Set<int> _selectedCaracteristicas = {};
+  final Set<CaracteristicaModelPage> _selectedCaracteristicas = {};
   List<CaracteristicaModel> _listCaracteristicas = [];
+  Color _selectedColor = Colors.brown;
 
-  TextEditingController descricaoController = TextEditingController();
-  TextEditingController nomeCaracteristicaController = TextEditingController();
-  TextEditingController descricaoCaracteristicaController = TextEditingController();
+  final TextEditingController descricaoController = TextEditingController();
+  final TextEditingController nomeCaracteristicaController = TextEditingController();
+  final TextEditingController descricaoCaracteristicaController = TextEditingController();
+
+  CrohnHumorEnum? _selectedHumor;
 
   FormularioCrohnViewModel({
     required this.fezesService,
@@ -25,40 +32,144 @@ class FormularioCrohnViewModel extends ChangeNotifier {
 
   int get sliderValue => _sliderValue;
   int? get tipoFezes => _tipoEnum;
-  Set<int> get selectedCaracteristicas => _selectedCaracteristicas;
+  Set<CaracteristicaModelPage> get selectedCaracteristicas => _selectedCaracteristicas;
   List<CaracteristicaModel> get listCaracteristicas => _listCaracteristicas;
+  CrohnHumorEnum? get selectedHumor => _selectedHumor;
+  Color get selectedColor => _selectedColor;
 
   void updateSliderValue(int newValue) {
-    _sliderValue = newValue;
+    if (_sliderValue != newValue) {
+      _sliderValue = newValue;
+      notifyListeners();
+    }
+  }
+
+  void setColor(Color color) {
+    _selectedColor = color;
     notifyListeners();
   }
 
   void selectFezesType(int value) {
-    _tipoEnum = value;
+    if (_tipoEnum != value) {
+      _tipoEnum = value;
+      notifyListeners();
+    }
+  }
+
+  void selectHumor(CrohnHumorEnum humor) {
+    _selectedHumor = humor;
     notifyListeners();
   }
 
-  void toggleCaracteristica(int index) {
-    if (_selectedCaracteristicas.contains(index)) {
-      _selectedCaracteristicas.remove(index);
+  void toggleCaracteristicaSelection(CaracteristicaModelPage model) {
+    if (model.id == null) return;
+
+    if (_selectedCaracteristicas.any((element) => element.id == model.id)) {
+      _selectedCaracteristicas.remove(model);
     } else {
-      _selectedCaracteristicas.add(index);
+      _selectedCaracteristicas.add(model);
     }
     notifyListeners();
   }
 
-  Future<void> insertCaracteristica() async {
-    final CaracteristicaModel model = CaracteristicaModel(
-      id: const Uuid().v4(),
+  Future<void> saveCaracteristica() async {
+    if (nomeCaracteristicaController.text.isNotEmpty && descricaoCaracteristicaController.text.isNotEmpty) {
+      final CaracteristicaModel model = CaracteristicaModel(
+        nome: nomeCaracteristicaController.text,
+        descricao: descricaoCaracteristicaController.text,
+        idTipoDiario: null,
+      );
+      await caracteristicaService.save(model);
+      _listCaracteristicas.add(model);
+    }
+
+    getCombinedCaracteristicas();
+
+    notifyListeners();
+  }
+
+  Future<void> updateCaracteristica(CaracteristicaModelPage model) async {
+    final CaracteristicaModel updatedModel = CaracteristicaModel(
+      id: model.id,
       nome: nomeCaracteristicaController.text,
       descricao: descricaoCaracteristicaController.text,
-      idTipoDiario: null,
     );
 
-    await caracteristicaService.save(model);
+    await caracteristicaService.insertOrUpdate(updatedModel);
+
+    queryAllCaracteristicas();
+    notifyListeners();
+  }
+
+  Future<void> deleteCaracteristica(CaracteristicaModelPage model, int index) async {
+    await caracteristicaService.removeById(model.id!);
+
+    _listCaracteristicas = _listCaracteristicas.where((value) => value.id != model.id).toList();
+
+    debugPrint(_listCaracteristicas.toString());
+
+    notifyListeners();
   }
 
   Future<void> queryAllCaracteristicas() async {
     _listCaracteristicas = await caracteristicaService.queryAll();
+    notifyListeners();
+  }
+
+  List<CaracteristicaModelPage> getCombinedCaracteristicas() {
+    final enumCaracteristicas = CaracteristicasFezesEnum.values
+        .map(
+          (e) => CaracteristicaModelPage(
+            e.id,
+            e.nome,
+            e.descricao,
+            true,
+          ),
+        )
+        .toList();
+
+    final dbCaracteristicas = _listCaracteristicas
+        .map(
+          (e) => CaracteristicaModelPage(
+            e.id,
+            e.nome,
+            e.descricao,
+            false,
+          ),
+        )
+        .toList();
+
+    return [...enumCaracteristicas, ...dbCaracteristicas];
+  }
+
+  void populateEditFields(CaracteristicaModelPage item) {
+    nomeCaracteristicaController.text = item.nome ?? "";
+    descricaoCaracteristicaController.text = item.descricao ?? "";
+  }
+
+  void disposeControllers() {
+    descricaoController.dispose();
+    nomeCaracteristicaController.dispose();
+    descricaoCaracteristicaController.dispose();
+  }
+
+  Future<void> saveRegistroFezes() async {
+    RegistroFezesModel model = RegistroFezesModel(
+      nome: "",
+      idDiario: const Uuid().v4(),
+      duracao: 1,
+      quantidade: sliderValue,
+      nivelHumor: _selectedHumor?.index ?? 2,
+      nivelBristrol: _tipoEnum,
+      cor: selectedColor.value,
+      observacoes: descricaoController.text,
+      caracteristicas: _selectedCaracteristicas.toList(),
+    );
+
+    try {
+      await fezesService.save(model);
+    } catch (e) {
+      debugPrint(e.toString());
+    }
   }
 }
