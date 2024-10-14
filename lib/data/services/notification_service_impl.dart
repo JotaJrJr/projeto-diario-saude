@@ -100,11 +100,9 @@ class NotificationServiceImpl implements NotificationService {
           details,
           androidAllowWhileIdle: true,
           uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.wallClockTime,
-          matchDateTimeComponents: DateTimeComponents.time, // Repeats every day at the same time
+          matchDateTimeComponents: DateTimeComponents.time,
         );
-        print('Daily scheduled notification set for: $scheduledTime');
       } else if (recurrencePattern == 'Weekly') {
-        // Repeat on specific days of the week
         await _notificationsPlugin.zonedSchedule(
           int.parse(id),
           title,
@@ -115,9 +113,7 @@ class NotificationServiceImpl implements NotificationService {
           uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.wallClockTime,
           matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime, // Repeats on specific days
         );
-        print('Weekly scheduled notification set for: $scheduledTime on specific days: $specificDays');
       } else {
-        // One-time notification
         await _notificationsPlugin.zonedSchedule(
           int.parse(id),
           title,
@@ -128,31 +124,22 @@ class NotificationServiceImpl implements NotificationService {
           uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.wallClockTime,
           matchDateTimeComponents: null,
         );
-        print('One-time scheduled notification set for: $scheduledTime');
       }
     } catch (e) {
-      print('Error scheduling notification: $e');
+      print('Deu ruim: $e');
     }
   }
 
   @override
   Future<void> showNotification({required int id, required String title, required String body}) async {
     final details = await _notificationDetails();
-    print('Attempting to show notification: $title with body: $body'); // Debug log
 
     try {
       await _notificationsPlugin.show(id, title, body, details);
-      print('Notification successfully triggered!');
     } catch (e) {
-      print('Error showing notification: $e');
+      print('Deu ruim: $e');
     }
   }
-
-  // Future<void> showNotification({required int id, required String title, required String body}) async {
-  //   final details = await _notificationDetails();
-
-  //   await _notificationsPlugin.show(id, title, body, details);
-  // }
 
   Future<NotificationDetails> _notificationDetails() async {
     const AndroidNotificationDetails androidNotificationDetails = AndroidNotificationDetails(
