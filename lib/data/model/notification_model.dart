@@ -8,7 +8,7 @@ class NotificationModel {
   final DateTime scheduledTime;
   final bool isRecurring;
   final String? recurrencePattern;
-  final List<String> specificDays;
+  final List<String> specificDays; // "Mon, Tues, Wed,"
 
   NotificationModel({
     required this.id,

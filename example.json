@@ -1,0 +1,70 @@
+[
+
+    {
+        "rotinaPele": {
+            "id": "1234",
+            "nome": "nome",
+            "descricao": "descricao",
+            "dateInicio": 1234,
+            "dateFim": 1234
+        }
+    },
+
+
+    {
+        "rotinaAtividades": [
+            {
+                "idRotina": "1234",
+                "idAtividade": "1234",
+                "ordem": 1
+            },
+
+            {
+                "idRotina": "1234",
+                "idAtividade": "1234",
+                "ordem": 2
+            }
+        ]
+    },
+
+    {
+        "atividade": [
+            {
+                "id": "1234",
+                "idDetalhe": "12345",
+                "nome": "nome",
+                "descricao": "descricao",
+
+                "idProduto": "1234"
+            },
+
+            {
+                "id": "1234",
+                "idDetalhe": "12345",
+                "nome": "nome",
+                "descricao": "descricao",
+
+                "idProduto": "1234"
+            },
+
+            {
+                "id": "1234",
+                "idDetalhe": "12345",
+                "nome": "nome",
+                "descricao": "descricao",
+
+                "idProduto": "1234"
+            }
+        ]
+    },
+
+    {
+        "produto": {
+            "id": "1234",
+            "idAtividade": "1234",
+            "nome": "nome",
+            "descricao": "descricao",
+            "ordem": 1
+        }
+    }
+]

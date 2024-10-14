@@ -12,6 +12,7 @@ abstract class NotificationService {
   });
   Future<void> cancelNotification(String id);
   Future<void> cancelAllNotifications();
+  Future<void> showNotification({required int id, required String title, required String body});
 
   // database functions
   Future<List<NotificationModel>> queryAll();

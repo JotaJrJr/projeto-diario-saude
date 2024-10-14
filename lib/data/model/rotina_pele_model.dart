@@ -1,5 +1,3 @@
-import 'package:projeto_diarios_saude/data/table/rotina_pele_table.dart';
-
 class RotinaPeleModel {
   String? id;
   int? dateInicio;

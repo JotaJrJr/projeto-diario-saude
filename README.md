@@ -1,19 +1,38 @@
 # projeto_diarios_saude
 
-A new Flutter project.
+## Revisar banco de dados para relação com usuário depois
 
-## Getting Started
+Projeto criado com intuito de armazenar e monitorar "diários" de saúde em áreas diversas do usuário, ideia veio da minha cunhada Bertha
+Tentar explorar : 
 
-This project is a starting point for a Flutter application.
+Diabetes
+Doença de Crohn
+Pressão
+Ciclo Menstrual
+Saúde Mental
+Medicações
+Alergias 
+Insônia / Distúrbios
+Hipertensão
+Rotina Skin Care / Cabelo
+Diários Generalizados
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -31,3 +50,50 @@ Tratamentos distintos entre noturno e diuno, opção de cirar lembrete com horá
 Também há a opção, algo genêrico fora desse contexto, que não encaixa em ambos
 
 Fotos para mostrar o progresso
+
+
+Rotina Principal - Tabela RotinaPeleTable
+
+    - Rotina Diurna - Tabela DetalheRotinaPeleTable
+
+        - Atividade - Tabela AtividadeRotinaPeleTable
+
+            - Produto X - Tabela ProdutoRotinaPeleTable
+            - Produto Y - Tabela ProdutoRotinaPeleTable
+
+    - Rotina Noturna - Tabela DetalheRotinaPeleTable
+
+        - Atividade - Tabela AtividadeRotinaPeleTable
+
+            - Produto X - Tabela ProdutoRotinaPeleTable
+            - Produto Y - Tabela ProdutoRotinaPeleTable
+
+    - Rotina Adicional - Tabela DetalheRotinaPeleTable (semanalmente ou em outro loop de rotina)
+
+        - Atividade - Tabela AtividadeRotinaPeleTable
+
+            - Produto X - Tabela ProdutoRotinaPeleTable
+            - Produto Y - Tabela ProdutoRotinaPeleTable
+
+
+
+
+
+
+            ROTINA DE PELE X
+
+
+
+SEGUNDA         TERÇA       QUARTA      QUINTA      SEXTA       SÁBADO      DOMINGO
+DIURNO                      DIURNO                  DIURNO    
+ATIVIDADE X                 ATIVIDADE X             ATIVIDADE X
+ATIVIDADE Y                 ATIVIDADE Y             ATIVIDADE Y
+
+NOTURNO                                             NOTURNO
+ATIVIDADE X                                         ATIVIDADE X
+ATIVIDADE Y                                         ATIVIDADE Y
+
+
+Atividade pode ser atrelada à produto, no caso a atividade foi o uso do produto
+Atividade pode não ser atrelada, no caso não depende da tabela produto, somente uma descrição
+

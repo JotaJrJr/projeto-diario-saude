@@ -1,0 +1,93 @@
+[
+    {
+        "rotinaPele": {
+            "id": "5678",
+            "nome": "Rotina de Cuidados Diários",
+            "descricao": "Rotina de cuidados para pele e cabelo pela manhã e à noite",
+            "dateInicio": 1696800000000,
+            "dateFim": null
+        }
+    },
+    {
+        "rotinaAtividades": [
+            {
+                "idRotina": "5678",
+                "idAtividade": "1001",
+                "ordem": 1,
+                "horario": 6
+            },
+            {
+                "idRotina": "5678",
+                "idAtividade": "1002",
+                "ordem": 2,
+                "horario": 6
+            },
+            {
+                "idRotina": "5678",
+                "idAtividade": "1003",
+                "ordem": 3,
+                "horario": 8
+            },
+            {
+                "idRotina": "5678",
+                "idAtividade": "1004",
+                "ordem": 4,
+                "horario": 8
+            }
+        ]
+    },
+    {
+        "atividade": [
+            {
+                "id": "1001",
+                "nome": "Lavar o Rosto",
+                "descricao": "Usar sabonete facial suave para lavar o rosto logo ao acordar",
+                "idProduto": "3001"
+            },
+            {
+                "id": "1002",
+                "nome": "Limpar o Cabelo",
+                "descricao": "Usar shampoo suave para lavar o cabelo",
+                "idProduto": "3002"
+            },
+            {
+                "id": "1003",
+                "nome": "Lavar o Rosto",
+                "descricao": "Usar sabonete facial para lavar o rosto antes de dormir",
+                "idProduto": "3001"
+            },
+            {
+                "id": "1004",
+                "nome": "Limpar o Cabelo",
+                "descricao": "Usar condicionador suave para limpar o cabelo antes de dormir",
+                "idProduto": "3003"
+            }
+        ]
+    },
+
+    {
+        "produto": [
+            {
+                "id": "3001",
+                "idAtividade": "1001",
+                "nome": "Sabonete Facial Suave",
+                "descricao": "Sabonete ideal para limpeza profunda e hidratação",
+                "ordem": 1
+            },
+            {
+                "id": "3002",
+                "idAtividade": "1002",
+                "nome": "Shampoo Suave",
+                "descricao": "Shampoo suave para uso diário",
+                "ordem": 2
+            },
+            {
+                "id": "3003",
+                "idAtividade": "1004",
+                "nome": "Condicionador Suave",
+                "descricao": "Condicionador leve para hidratação noturna",
+                "ordem": 3
+            }
+        ]
+    }
+]

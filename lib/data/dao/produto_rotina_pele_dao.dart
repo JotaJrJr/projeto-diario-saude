@@ -1,5 +1,4 @@
 import 'package:drift/drift.dart';
-import 'package:flutter/material.dart';
 import 'package:projeto_diarios_saude/data/app_db.dart';
 import 'package:projeto_diarios_saude/data/table/produto_rotina_pele_table.dart';
 
